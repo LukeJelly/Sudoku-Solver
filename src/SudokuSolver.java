@@ -7,6 +7,7 @@ import java.util.Stack;
  * @version 1.0
  */
 public class SudokuSolver {
+    public static final int EMPTY_CELL = 0; // Place holder for an Emtpy cell
     /**
      * Solves the given Sudoku, preconditions: 
      * 1. Empty space is reperesnted by 0s.
@@ -48,15 +49,17 @@ public class SudokuSolver {
             4. If at top of stack and return false then we know all possible permutations were tried return false
                else we return true because we have a solved puzzle.
          */
-        int EMPTY_CELL = 0; // Place holder for an Emtpy cell
         while (!allEmptyIndexes.isEmpty()) {
+            int rowIndex = 0;
+            int colIndex = 0;
             // 1.
             Integer[] workingIndex = allEmptyIndexes.pop();
             // 2.
-            int row = workingIndex[0];
-            int col = workingIndex[1];
+            int row = workingIndex[rowIndex];
+            int col = workingIndex[colIndex];
             // 3.
             for (int number = 1; number <= 9; number++) {
+                
                 if (isNumberAllowed(workingSudoku, row, col, number)) {
                     // 3 i.
                     workingSudoku[row][col] = number;
@@ -137,10 +140,11 @@ public class SudokuSolver {
      * @return true if the number is in there, false if not.
      */
     private static boolean containsInBox(int[][] sudoku, int row, int col, int number) {
-        int r = row - row % 3;
-        int c = col - col % 3;
-        for (int i = r; i < r + 3; i++) {
-            for (int j = c; j < c + 3; j++) {
+        int sizeOfBox = 3;
+        int r = row - row % sizeOfBox;
+        int c = col - col % sizeOfBox;
+        for (int i = r; i < r + sizeOfBox; i++) {
+            for (int j = c; j < c + sizeOfBox; j++) {
                 if (sudoku[i][j] == number) {
                     return true;
                 }
@@ -157,6 +161,10 @@ public class SudokuSolver {
      */
     private static Stack<Integer[]> findAllEmptySpaces(int[][] sudoku) {
         Stack<Integer[]> allIndexes = new Stack<>();
+        /*
+         * Loop last index of the Sudoku backwards so when I start going through
+         * them I start at the first one.
+         */
         int size = sudoku.length - 1;
         for (int outer = size; outer >= 0; outer--) {
             for (int inner = size; inner >= 0; inner--) {
