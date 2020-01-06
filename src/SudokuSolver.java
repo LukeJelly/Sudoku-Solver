@@ -2,38 +2,40 @@ import java.util.Stack;
 
 /**
  * A simple class that solves a Sudoky.
+ * 
  * @author Luke Kelly
  * @version 1.0
  */
-class SudokuSolver {
+public class SudokuSolver {
     /**
      * Solves the given Sudoku, preconditions: 
-     * 1. Empty space is reperesnted by 0s. 
+     * 1. Empty space is reperesnted by 0s.
      * 2. The sudoku is not already invalid(No duplicates in a row, colum, or 3x3 box,except zeros). 
      * 3. The sudoku is a normal 9x9 sudoku.
+     * 
      * @return a solved sudoku is the sudoku is solvable, null if not.
      */
-    public static  int[][] solveSudoku(int[][] original) {
-        //Clone the original so I don't change the original array
+    public static int[][] solveSudoku(int[][] original) {
+        // Clone the original so I don't change the original array
         int[][] workingSudoku = cloneSudoku(original);
-        //Find all the emtpy indexes in the array, this simplifes the algorithm.
+        // Find all the emtpy indexes in the array, this simplifes the algorithm.
         Stack<Integer[]> allEmtpyIndexes = findAllEmptySpaces(workingSudoku);
-        //Solve it, if they method returns false the sudoku is unsolvable.
-        if(solveSudoku(workingSudoku, allEmtpyIndexes)){
+        // Solve it, if they method returns false the sudoku is unsolvable.
+        if (solveSudoku(workingSudoku, allEmtpyIndexes)) {
             return workingSudoku;
-        }else{
+        } else {
             return null;
         }
     }
 
     /**
-     * Private recursive helper for solveSudoku
-     * @param workingSudoku the Sudoku we are trying to solve
+     * Recursivly solves the sudoku. 
+     * 
+     * @param workingSudoku   the Sudoku we are trying to solve
      * @param allEmptyIndexes a Stack holding all the emtpy locations
      * @return true if the sudoku is solved, false if not.
      */
-    private static boolean solveSudoku(int[][] workingSudoku, 
-                                       Stack<Integer[]> allEmptyIndexes) {
+    private static boolean solveSudoku(int[][] workingSudoku, Stack<Integer[]> allEmptyIndexes) {
         /* Algorithm Explanation:
             1. Grab the first index that is empty from the stack,
             2. Grab all information from that index.
@@ -46,55 +48,57 @@ class SudokuSolver {
             4. If at top of stack and return false then we know all possible permutations were tried return false
                else we return true because we have a solved puzzle.
          */
-        int EMPTY_CELL = 0; //Place holder for an Emtpy cell
+        int EMPTY_CELL = 0; // Place holder for an Emtpy cell
         while (!allEmptyIndexes.isEmpty()) {
-            //1.
+            // 1.
             Integer[] workingIndex = allEmptyIndexes.pop();
-            //2.
+            // 2.
             int row = workingIndex[0];
             int col = workingIndex[1];
-            //3.
+            // 3.
             for (int number = 1; number <= 9; number++) {
-                if (isAllowed(workingSudoku, row, col, number)) {
-                    //3 i.
+                if (isNumberAllowed(workingSudoku, row, col, number)) {
+                    // 3 i.
                     workingSudoku[row][col] = number;
-                    if (solveSudoku(workingSudoku, allEmptyIndexes)){
-                        //3 i a.
+                    if (solveSudoku(workingSudoku, allEmptyIndexes)) {
+                        // 3 i a.
                         return true;
                     } else {
-                        //3 i b.
+                        // 3 i b.
                         workingSudoku[row][col] = EMPTY_CELL;
                     }
                 }
-            
+
             }
-            //3 ii.
-            allEmptyIndexes.add(workingIndex);
+            // 3 ii.
+            allEmptyIndexes.push(workingIndex);
             return false;
         }
         return true;
     }
 
     /**
-     * Checks if that number is already in the row, colum, 3x3 box that our
-     * index is in.
+     * Checks if that number is already in the row, colum, 3x3 box that our index is
+     * in.
+     * 
      * @param workingSudoku the Sudoku we are working in
-     * @param rowIndex the index of the row we are working in
-     * @param colIndex the index of the colum we are working in
-     * @param number the number we are trying to place there
+     * @param rowIndex      the index of the row we are working in
+     * @param colIndex      the index of the colum we are working in
+     * @param number        the number we are trying to place there
      * @return true if the number works, false if it doesn't.
      */
-    private static boolean isAllowed(int[][] workingSudoku, int rowIndex, int colIndex, int number) {
-        return !(containsInRow(workingSudoku, rowIndex, number) ||
+    private static boolean isNumberAllowed(int[][] workingSudoku, int rowIndex, int colIndex, int number) {
+        return !(containsInRow(workingSudoku, rowIndex, number) || 
                  containsInCol(workingSudoku, colIndex, number) || 
                  containsInBox(workingSudoku, rowIndex, colIndex, number));
     }
 
     /**
      * Checks if the given number exists in this row.
-     * @param sudoku the Sudoku we are working in.
+     * 
+     * @param sudoku   the Sudoku we are working in.
      * @param rowIndex the index of the row.
-     * @param number The number we are checking against.
+     * @param number   The number we are checking against.
      * @return true if the number is in there, false if not.
      */
     private static boolean containsInRow(int[][] sudoku, int rowIndex, int number) {
@@ -108,9 +112,10 @@ class SudokuSolver {
 
     /**
      * Checks if the given number exists in this colum.
-     * @param sudoku the Sudoku we are working in.
+     * 
+     * @param sudoku   the Sudoku we are working in.
      * @param colIndex the index of the colum.
-     * @param number The number we are checking against.
+     * @param number   The number we are checking against.
      * @return true if the number is in there, false if not.
      */
     private static boolean containsInCol(int[][] sudoku, int colIndex, int number) {
@@ -124,9 +129,10 @@ class SudokuSolver {
 
     /**
      * Checks if the given number exists in the box.
+     * 
      * @param sudoku the Sudoku we are working in.
-     * @param row the index of the row.
-     * @param col the index of the colum.
+     * @param row    the index of the row.
+     * @param col    the index of the colum.
      * @param number The number we are checking against.
      * @return true if the number is in there, false if not.
      */
@@ -145,6 +151,7 @@ class SudokuSolver {
 
     /**
      * Finds all the emtpy indexes in the Sudoku.
+     * 
      * @param sudoku the sudoku we are searching through.
      * @return A stack with all the empty indexes in the Sudoku.
      */
@@ -163,8 +170,9 @@ class SudokuSolver {
     }
 
     /**
-     * Clones the given sudoku, so we can make changes with out affecting the 
+     * Clones the given sudoku, so we can make changes with out affecting the
      * original.
+     * 
      * @param original the original Sudoku
      * @return a copy of the original.
      */
