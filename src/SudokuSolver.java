@@ -1,28 +1,30 @@
 import java.util.Stack;
 
 /**
- * A simple class that solves a Sudoky.
+ * Solves a Sudoku board.
  * 
  * @author Luke Kelly
  * @version 1.0
  */
 public class SudokuSolver {
-    public static final int EMPTY_CELL = 0; // Place holder for an Emtpy cell
+    public static final int EMPTY_CELL = 0; // Place holder for an Empty cell
+    private static final int SIZE_ROW_COLUMN = 9;
     /**
      * Solves the given Sudoku, preconditions: 
-     * 1. Empty space is reperesnted by 0s.
-     * 2. The sudoku is not already invalid(No duplicates in a row, colum, or 3x3 box,except zeros). 
-     * 3. The sudoku is a normal 9x9 sudoku.
-     * 
+     * <ul>
+     * <li>1. Empty space is represented by 0s.</li>
+     * <li>2. The sudoku is not already invalid(No duplicates in a row, column, or 3x3 box,except zeros).</li>
+     * <li>3. The sudoku is a normal 9x9 sudoku.</li>
+     * </ul>
      * @return a solved sudoku is the sudoku is solvable, null if not.
      */
     public static int[][] solveSudoku(int[][] original) {
         // Clone the original so I don't change the original array
         int[][] workingSudoku = cloneSudoku(original);
-        // Find all the emtpy indexes in the array, this simplifes the algorithm.
-        Stack<Integer[]> allEmtpyIndexes = findAllEmptySpaces(workingSudoku);
+        // Find all the empty indexes in the array, this simplifies the algorithm.
+        Stack<Integer[]> allEmptyIndexes = findAllEmptySpaces(workingSudoku);
         // Solve it, if they method returns false the sudoku is unsolvable.
-        if (solveSudoku(workingSudoku, allEmtpyIndexes)) {
+        if (solveSudoku(workingSudoku, allEmptyIndexes)) {
             return workingSudoku;
         } else {
             return null;
@@ -30,10 +32,10 @@ public class SudokuSolver {
     }
 
     /**
-     * Recursivly solves the sudoku. 
+     * Recursively solves the sudoku. 
      * 
      * @param workingSudoku   the Sudoku we are trying to solve
-     * @param allEmptyIndexes a Stack holding all the emtpy locations
+     * @param allEmptyIndexes a Stack holding all the empty locations
      * @return true if the sudoku is solved, false if not.
      */
     private static boolean solveSudoku(int[][] workingSudoku, Stack<Integer[]> allEmptyIndexes) {
@@ -43,7 +45,7 @@ public class SudokuSolver {
             3. Loop through all the numbers from 1-9 and see if they fit work in the empty space.
                 i.  If the number is allowed, put it in that index, and restart the loop from the next index.
                     a. If the recursive call returns true then we know that number works in that location return true;
-                    b. If the recursive call retruns false then we know that number does not work,
+                    b. If the recursive call returns false then we know that number does not work,
                        place a EMPTY_CELL back in that location and continue back at step 3.
                 ii. If none of the numbers work, we put this index back in the stack, and return false
             4. If at top of stack and return false then we know all possible permutations were tried return false
@@ -58,7 +60,7 @@ public class SudokuSolver {
             int row = workingIndex[rowIndex];
             int col = workingIndex[colIndex];
             // 3.
-            for (int number = 1; number <= 9; number++) {
+            for (int number = 1; number <= SIZE_ROW_COLUMN; number++) {
                 
                 if (isNumberAllowed(workingSudoku, row, col, number)) {
                     // 3 i.
@@ -81,12 +83,12 @@ public class SudokuSolver {
     }
 
     /**
-     * Checks if that number is already in the row, colum, 3x3 box that our index is
+     * Checks if that number is already in the row, column, 3x3 box that our index is
      * in.
      * 
      * @param workingSudoku the Sudoku we are working in
      * @param rowIndex      the index of the row we are working in
-     * @param colIndex      the index of the colum we are working in
+     * @param colIndex      the index of the column we are working in
      * @param number        the number we are trying to place there
      * @return true if the number works, false if it doesn't.
      */
@@ -105,7 +107,7 @@ public class SudokuSolver {
      * @return true if the number is in there, false if not.
      */
     private static boolean containsInRow(int[][] sudoku, int rowIndex, int number) {
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < SIZE_ROW_COLUMN; i++) {
             if (sudoku[rowIndex][i] == number) {
                 return true;
             }
@@ -114,15 +116,15 @@ public class SudokuSolver {
     }
 
     /**
-     * Checks if the given number exists in this colum.
+     * Checks if the given number exists in this column.
      * 
      * @param sudoku   the Sudoku we are working in.
-     * @param colIndex the index of the colum.
+     * @param colIndex the index of the column.
      * @param number   The number we are checking against.
      * @return true if the number is in there, false if not.
      */
     private static boolean containsInCol(int[][] sudoku, int colIndex, int number) {
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < SIZE_ROW_COLUMN; i++) {
             if (sudoku[i][colIndex] == number) {
                 return true;
             }
@@ -135,7 +137,7 @@ public class SudokuSolver {
      * 
      * @param sudoku the Sudoku we are working in.
      * @param row    the index of the row.
-     * @param col    the index of the colum.
+     * @param col    the index of the column.
      * @param number The number we are checking against.
      * @return true if the number is in there, false if not.
      */
@@ -154,7 +156,7 @@ public class SudokuSolver {
     }
 
     /**
-     * Finds all the emtpy indexes in the Sudoku.
+     * Finds all the empty indexes in the Sudoku.
      * 
      * @param sudoku the sudoku we are searching through.
      * @return A stack with all the empty indexes in the Sudoku.

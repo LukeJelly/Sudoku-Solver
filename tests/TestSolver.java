@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Simple test clas to test my Solve Sudoku.
+ * Simple test class to test my Solve Sudoku.
  * 
  * @author Luke Kelly
  * @version 1.0
