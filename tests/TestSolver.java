@@ -31,8 +31,7 @@ public class TestSolver {
         // Python command to tell terminal
         String command = "python ";
         // Location of the file.
-        String pathToFile = "C:\\Users\\LukeJ\\OneDrive\\Documents\\"+
-                            "Programming\\Java\\Sudoku Solver SA\\src\\Generator.py";
+        String pathToFile = "\"C:\\Users\\LukeJ\\OneDrive\\Documents\\Programming\\Java\\Sudoku Solver SA\\src\\Generator.py\"";
 
         // The process that will run to create the file.
         Process generator;
