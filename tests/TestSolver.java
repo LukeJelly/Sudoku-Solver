@@ -18,7 +18,7 @@ import org.junit.Test;
 public class TestSolver {
     // The size of a sudoku
     private int DIMENSIONS_OF_SUDOKU = 9;
-    // Interger representation of an emtpy space
+    // Integer representation of an empty space
     private int EMPTY_SPACE = 0;
     // The original sudoku generated every time.
     int[][] sudoku = new int[DIMENSIONS_OF_SUDOKU][DIMENSIONS_OF_SUDOKU];
@@ -31,8 +31,8 @@ public class TestSolver {
         // Python command to tell terminal
         String command = "python ";
         // Location of the file.
-        String pathToFile = "\"C:\\Users\\LukeJ\\OneDrive\\Documents\\"
-                + "Programming\\Java\\Sudoku Solver\\src\\Generator.py\"";
+        String pathToFile = "C:\\Users\\LukeJ\\OneDrive\\Documents\\"+
+                            "Programming\\Java\\Sudoku Solver SA\\src\\Generator.py";
 
         // The process that will run to create the file.
         Process generator;
@@ -59,9 +59,8 @@ public class TestSolver {
         }
 
         // File location of the file
-        File puzzle = new File(
-                "C:\\Users\\LukeJ\\OneDrive\\Documents\\" + 
-                "Programming\\Java\\Sudoku Solver\\puzzle.txt");
+        File puzzle = new File("C:\\Users\\LukeJ\\OneDrive\\Documents\\"+
+                               "Programming\\Java\\Sudoku Solver SA\\puzzle.txt");
 
         try {
             // Scanner to read through the file.
@@ -95,7 +94,7 @@ public class TestSolver {
 
     @Test
     public void testSolver() {
-        // Check 10 different Sudokus.
+        // Check 10 different sudoku
         int numTests = 10;
         for (int testNumber = 0; testNumber < numTests; testNumber++) {
             generateRandomSudoku();
@@ -113,7 +112,7 @@ public class TestSolver {
 
     /**
      * Checks if the given sudoku is complete and that there are no duplicate
-     * nubmers.
+     * numbers.
      */
     private boolean isComplete(int[][] compSudoku) {
         // Check if all rows are correct first.
@@ -129,7 +128,7 @@ public class TestSolver {
             }
         }
 
-        // Check if all colums are correct second.
+        // Check if all column are correct second.
         for (int outer = 0; outer < DIMENSIONS_OF_SUDOKU; outer++) {
             // Add one to DIMENSIONS_OF_SUDOKU because the number 9 is allowed.
             boolean[] hasBeenUsed = new boolean[DIMENSIONS_OF_SUDOKU + 1];
@@ -141,7 +140,7 @@ public class TestSolver {
                     return false;
             }
         }
-        /* If we get here then we know all colums and rows are correct */
+        /* If we get here then we know all column and rows are correct */
         return true;
     }
 
@@ -153,7 +152,7 @@ public class TestSolver {
             returnedValue = false;
         /*If the value is less than max number allowed
           If the value is less than one
-          If the value is less is an Emtpy space.
+          If the value is less is an Empty space.
           return false.*/
         
         } else if (value > DIMENSIONS_OF_SUDOKU || value < 1 || value == EMPTY_SPACE) {
@@ -175,7 +174,7 @@ public class TestSolver {
             for (int inner = 0; inner < DIMENSIONS_OF_SUDOKU; inner++) {
                 /*
                  * If there isn't and empty space in the original at this index
-                 * check this location agains the completed Sudoku.
+                 * check this location against the completed Sudoku.
                  */
                 if (sudoku[outer][inner] != EMPTY_SPACE) {
                     if (sudoku[outer][inner] != compSudoku[outer][inner])

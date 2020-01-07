@@ -1,4 +1,5 @@
-import java.util.Stack;
+import java.util.Deque;
+import java.util.LinkedList;
 
 /**
  * Solves a Sudoku board.
@@ -9,6 +10,8 @@ import java.util.Stack;
 public class SudokuSolver {
     public static final int EMPTY_CELL = 0; // Place holder for an Empty cell
     private static final int SIZE_ROW_COLUMN = 9;
+    private static int[][] workingSudoku;
+    private static Deque<Integer[]> allEmptyIndexes;
     /**
      * Solves the given Sudoku, preconditions: 
      * <ul>
@@ -20,11 +23,11 @@ public class SudokuSolver {
      */
     public static int[][] solveSudoku(int[][] original) {
         // Clone the original so I don't change the original array
-        int[][] workingSudoku = cloneSudoku(original);
+        workingSudoku = cloneSudoku(original);
         // Find all the empty indexes in the array, this simplifies the algorithm.
-        Stack<Integer[]> allEmptyIndexes = findAllEmptySpaces(workingSudoku);
+        allEmptyIndexes = findAllEmptySpaces();
         // Solve it, if they method returns false the sudoku is unsolvable.
-        if (solveSudoku(workingSudoku, allEmptyIndexes)) {
+        if (solveSudoku()) {
             return workingSudoku;
         } else {
             return null;
@@ -38,7 +41,7 @@ public class SudokuSolver {
      * @param allEmptyIndexes a Stack holding all the empty locations
      * @return true if the sudoku is solved, false if not.
      */
-    private static boolean solveSudoku(int[][] workingSudoku, Stack<Integer[]> allEmptyIndexes) {
+    private static boolean solveSudoku() {
         /* Algorithm Explanation:
             1. Grab the first index that is empty from the stack,
             2. Grab all information from that index.
@@ -65,7 +68,7 @@ public class SudokuSolver {
                 if (isNumberAllowed(workingSudoku, row, col, number)) {
                     // 3 i.
                     workingSudoku[row][col] = number;
-                    if (solveSudoku(workingSudoku, allEmptyIndexes)) {
+                    if (solveSudoku()) {
                         // 3 i a.
                         return true;
                     } else {
@@ -158,19 +161,20 @@ public class SudokuSolver {
     /**
      * Finds all the empty indexes in the Sudoku.
      * 
-     * @param sudoku the sudoku we are searching through.
+     * @param workingSudoku the sudoku we are searching through.
      * @return A stack with all the empty indexes in the Sudoku.
      */
-    private static Stack<Integer[]> findAllEmptySpaces(int[][] sudoku) {
-        Stack<Integer[]> allIndexes = new Stack<>();
+    private static Deque<Integer[]> findAllEmptySpaces() {
+        Deque<Integer[]> allIndexes = new LinkedList<>();
+        
         /*
          * Loop last index of the Sudoku backwards so when I start going through
          * them I start at the first one.
          */
-        int size = sudoku.length - 1;
+        int size = workingSudoku.length - 1;
         for (int outer = size; outer >= 0; outer--) {
             for (int inner = size; inner >= 0; inner--) {
-                if (sudoku[outer][inner] == 0) {
+                if (workingSudoku[outer][inner] == 0) {
                     allIndexes.push(new Integer[] { outer, inner, 1 });
                 }
             }
