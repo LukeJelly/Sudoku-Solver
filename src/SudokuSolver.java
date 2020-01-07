@@ -53,7 +53,7 @@ public class SudokuSolver {
          */
         while (!allEmptyIndexes.isEmpty()) {
             int rowIndex = 0;
-            int colIndex = 0;
+            int colIndex = 1;
             // 1.
             Integer[] workingIndex = allEmptyIndexes.pop();
             // 2.
