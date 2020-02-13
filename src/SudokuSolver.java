@@ -8,10 +8,11 @@ import java.util.LinkedList;
  * @version 1.0
  */
 public class SudokuSolver {
-    public static final int EMPTY_CELL = 0; // Place holder for an Empty cell
-    private static final int SIZE_ROW_COLUMN = 9;
+    public static final int EMPTY_CELL = 0;
+    private static final int SIZE_ROW_COLUMN = 9; 
     private static int[][] workingSudoku;
     private static Deque<Integer[]> allEmptyIndexes;
+
     /**
      * Solves the given Sudoku, preconditions: 
      * <ul>
@@ -22,11 +23,8 @@ public class SudokuSolver {
      * @return a solved sudoku is the sudoku is solvable, null if not.
      */
     public static int[][] solveSudoku(int[][] original) {
-        // Clone the original so I don't change the original array
-        workingSudoku = cloneSudoku(original);
-        // Find all the empty indexes in the array, this simplifies the algorithm.
-        allEmptyIndexes = findAllEmptySpaces();
-        // Solve it, if they method returns false the sudoku is unsolvable.
+        cloneOriginalSudoku(original);
+        findAllEmptySpacesInSudoku();
         if (solveSudoku()) {
             return workingSudoku;
         } else {
@@ -34,8 +32,35 @@ public class SudokuSolver {
         }
     }
 
+    private static void cloneOriginalSudoku(int[][] original) {
+        int sizeSudoku = original.length;
+        int[][] newArr = new int[sizeSudoku][sizeSudoku];
+        for (int i = 0; i < sizeSudoku; i++) {
+            newArr[i] = original[i].clone();
+        }
+        workingSudoku = newArr;
+    }
+
+    private static void findAllEmptySpacesInSudoku() {
+        allEmptyIndexes = new LinkedList<>();
+        /*
+         * Loop last index of the Sudoku backwards so when I start going through
+         * them I start at the first one.
+         */
+        int size = workingSudoku.length - 1;
+        for (int outer = size; outer >= 0; outer--) {
+            for (int inner = size; inner >= 0; inner--) {
+                if (workingSudoku[outer][inner] == 0) {
+                    allEmptyIndexes.push(new Integer[] { outer, inner, 1 });
+                }
+            }
+
+        }
+    }
+
     /**
-     * Recursively solves the sudoku. 
+     * Uses recursive backtracking to find a possible solution for the given
+     * Sudoku.
      * 
      * @param workingSudoku   the Sudoku we are trying to solve
      * @param allEmptyIndexes a Stack holding all the empty locations
@@ -85,31 +110,13 @@ public class SudokuSolver {
         return true;
     }
 
-    /**
-     * Checks if that number is already in the row, column, 3x3 box that our index is
-     * in.
-     * 
-     * @param workingSudoku the Sudoku we are working in
-     * @param rowIndex      the index of the row we are working in
-     * @param colIndex      the index of the column we are working in
-     * @param number        the number we are trying to place there
-     * @return true if the number works, false if it doesn't.
-     */
     private static boolean isNumberAllowed(int[][] workingSudoku, int rowIndex, int colIndex, int number) {
-        return !(containsInRow(workingSudoku, rowIndex, number) || 
-                 containsInCol(workingSudoku, colIndex, number) || 
-                 containsInBox(workingSudoku, rowIndex, colIndex, number));
+        return !(numberInRow(workingSudoku, rowIndex, number) || 
+                 numberInCol(workingSudoku, colIndex, number) || 
+                 numberIn3By3Box(workingSudoku, rowIndex, colIndex, number));
     }
 
-    /**
-     * Checks if the given number exists in this row.
-     * 
-     * @param sudoku   the Sudoku we are working in.
-     * @param rowIndex the index of the row.
-     * @param number   The number we are checking against.
-     * @return true if the number is in there, false if not.
-     */
-    private static boolean containsInRow(int[][] sudoku, int rowIndex, int number) {
+    private static boolean numberInRow(int[][] sudoku, int rowIndex, int number) {
         for (int i = 0; i < SIZE_ROW_COLUMN; i++) {
             if (sudoku[rowIndex][i] == number) {
                 return true;
@@ -117,16 +124,8 @@ public class SudokuSolver {
         }
         return false;
     }
-
-    /**
-     * Checks if the given number exists in this column.
-     * 
-     * @param sudoku   the Sudoku we are working in.
-     * @param colIndex the index of the column.
-     * @param number   The number we are checking against.
-     * @return true if the number is in there, false if not.
-     */
-    private static boolean containsInCol(int[][] sudoku, int colIndex, int number) {
+    
+    private static boolean numberInCol(int[][] sudoku, int colIndex, int number) {
         for (int i = 0; i < SIZE_ROW_COLUMN; i++) {
             if (sudoku[i][colIndex] == number) {
                 return true;
@@ -144,7 +143,7 @@ public class SudokuSolver {
      * @param number The number we are checking against.
      * @return true if the number is in there, false if not.
      */
-    private static boolean containsInBox(int[][] sudoku, int row, int col, int number) {
+    private static boolean numberIn3By3Box(int[][] sudoku, int row, int col, int number) {
         int sizeOfBox = 3;
         int r = row - row % sizeOfBox;
         int c = col - col % sizeOfBox;
@@ -156,46 +155,5 @@ public class SudokuSolver {
             }
         }
         return false;
-    }
-
-    /**
-     * Finds all the empty indexes in the Sudoku.
-     * 
-     * @param workingSudoku the sudoku we are searching through.
-     * @return A stack with all the empty indexes in the Sudoku.
-     */
-    private static Deque<Integer[]> findAllEmptySpaces() {
-        Deque<Integer[]> allIndexes = new LinkedList<>();
-        
-        /*
-         * Loop last index of the Sudoku backwards so when I start going through
-         * them I start at the first one.
-         */
-        int size = workingSudoku.length - 1;
-        for (int outer = size; outer >= 0; outer--) {
-            for (int inner = size; inner >= 0; inner--) {
-                if (workingSudoku[outer][inner] == 0) {
-                    allIndexes.push(new Integer[] { outer, inner, 1 });
-                }
-            }
-
-        }
-        return allIndexes;
-    }
-
-    /**
-     * Clones the given sudoku, so we can make changes with out affecting the
-     * original.
-     * 
-     * @param original the original Sudoku
-     * @return a copy of the original.
-     */
-    private static int[][] cloneSudoku(int[][] original) {
-        int sizeSudoku = original.length;
-        int[][] newArr = new int[sizeSudoku][sizeSudoku];
-        for (int i = 0; i < sizeSudoku; i++) {
-            newArr[i] = original[i].clone();
-        }
-        return newArr;
     }
 }
