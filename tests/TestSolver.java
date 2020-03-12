@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -28,41 +29,23 @@ public class TestSolver {
      */
     @Before
     public void generateRandomSudoku() {
-        // Python command to tell terminal
         String command = "python ";
-        // Location of the file.
-        String pathToFile = "\"C:\\Users\\LukeJ\\OneDrive\\Documents\\Programming\\Java\\Sudoku Solver SA\\src\\Generator.py\"";
+        String locationOfFile = "\"C:\\Users\\LukeJ\\OneDrive\\Documents\\Programming\\Java\\Sudoku Solver SA\\src\\Generator.py\"";
 
-        // The process that will run to create the file.
         Process generator;
         try {
-            // Run python script to generate a sudoku file.
-            generator = Runtime.getRuntime().exec(command + pathToFile);
-            /*
-             * Wait for file to be created, the python process will close itself 
-             * when it is done.
-             */
+            generator = Runtime.getRuntime().exec(command + locationOfFile);
             generator.waitFor();
         } catch (IOException e) {
-            /*
-             * Used in the testCreateFile test to make sure the generator is 
-             * working properly
-             */
             fail("Could not run the python script");
         } catch (InterruptedException e) {
-            /*
-             * Used in the testCreateFile test to make sure the generator is 
-             * working properly
-             */
             fail("The process was interrupted");
         }
 
-        // File location of the file
         File puzzle = new File("C:\\Users\\LukeJ\\OneDrive\\Documents\\"+
                                "Programming\\Java\\Sudoku Solver SA\\puzzle.txt");
 
         try {
-            // Scanner to read through the file.
             Scanner inFile = new Scanner(puzzle);
             int outer = 0;
             while (inFile.hasNextLine()) {
@@ -75,25 +58,19 @@ public class TestSolver {
             }
             inFile.close();
         } catch (FileNotFoundException e) {
-            /*
-             * Used in the testCreateFile test to make sure the generator is 
-             * working properly
-             */
             fail("Puzzle file was not created.");
         }
     }
 
+    @Ignore("Test is used to debug generator.")
     @Test
-    /**
-     * Test to make sure the file generator is working properly.
-     */
-    public void testCreateFile() {
+    public void testFileGeneratorWorking() {
         generateRandomSudoku();
     }
 
     @Test
     public void testSolver() {
-        int numTests = 10;
+        int numTests = 1;
         for (int testNumber = 0; testNumber < numTests; testNumber++) {
             generateRandomSudoku();
             int[][] solvedSudoku = SudokuSolver.solveSudoku(this.sudoku);
@@ -114,58 +91,48 @@ public class TestSolver {
      */
     private boolean isComplete(int[][] compSudoku) {
         // Check if all rows are correct first.
-        for (int outer = 0; outer < DIMENSIONS_OF_SUDOKU; outer++) {
+        for (int row = 0; row < DIMENSIONS_OF_SUDOKU; row++) {
             // Add one to DIMENSIONS_OF_SUDOKU because the number 9 is allowed.
             boolean[] hasBeenUsed = new boolean[DIMENSIONS_OF_SUDOKU + 1];
-            for (int inner = 0; inner < DIMENSIONS_OF_SUDOKU; inner++) {
-                int value = compSudoku[outer][inner];
-                boolean check = checkValue(hasBeenUsed, value);
-                if (!check)
+            for (int col = 0; col < DIMENSIONS_OF_SUDOKU; col++) {
+                if (!checkValidValue(hasBeenUsed, compSudoku, row, col)){
                     return false;
+                }
             }
         }
 
         // Check if all column are correct second.
-        for (int outer = 0; outer < DIMENSIONS_OF_SUDOKU; outer++) {
+        for (int row = 0; row < DIMENSIONS_OF_SUDOKU; row++) {
             // Add one to DIMENSIONS_OF_SUDOKU because the number 9 is allowed.
             boolean[] hasBeenUsed = new boolean[DIMENSIONS_OF_SUDOKU + 1];
-            for (int inner = 0; inner < DIMENSIONS_OF_SUDOKU; inner++) {
-                int value = compSudoku[inner][outer];
-                boolean check = checkValue(hasBeenUsed, value);
-                if (!check)
+            for (int col = 0; col < DIMENSIONS_OF_SUDOKU; col++) {
+                //swap row and col because I want to check columns not rows.
+                if (!checkValidValue(hasBeenUsed, compSudoku, col, row)){
                     return false;
+                }
             }
         }
-        /* If we get here then we know all column and rows are correct */
         return true;
     }
 
 
-    private boolean checkValue(boolean[] hasBeenUsed, int value) {
-        boolean returnedValue = true;
-        //If the value has already been used.
-        if (hasBeenUsed[value] == true) {
-            returnedValue = false;
-        /*If the value is less than max number allowed
-          If the value is less than one
-          If the value is less is an Empty space.
-          return false.*/
+    private boolean checkValidValue(boolean[] hasBeenUsed, int[][] compSudoku, int row, int col) {
+        int value = compSudoku[col][row];
+        if (hasBeenUsed[value] == true)
+            return false;
         
-        } else if (value > DIMENSIONS_OF_SUDOKU || value < 1 || value == EMPTY_SPACE) {
-            returnedValue = false;
-        } else {
-            //Allowed number store it so it can't be used again.
-            hasBeenUsed[value] = true;
-            //ReturnedValue is already set to true so don't change it.
-        }
-        return returnedValue;
+        if (value > DIMENSIONS_OF_SUDOKU || value < 1)
+            return false;
+
+        hasBeenUsed[value] = true;
+        return true;
+        
     }
 
     /**
      * Checks if the given sudoku is the same as the original. 
      */
     private boolean checkSameSudoku(int[][] compSudoku) {
-        //Loop through every index.
         for (int outer = 0; outer < DIMENSIONS_OF_SUDOKU; outer++) {
             for (int inner = 0; inner < DIMENSIONS_OF_SUDOKU; inner++) {
                 /*
@@ -174,7 +141,6 @@ public class TestSolver {
                  */
                 if (sudoku[outer][inner] != EMPTY_SPACE) {
                     if (sudoku[outer][inner] != compSudoku[outer][inner])
-                    //If they are not the same return false.
                         return false;
                 }
             }
