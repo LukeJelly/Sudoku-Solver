@@ -93,7 +93,6 @@ public class TestSolver {
 
     @Test
     public void testSolver() {
-        // Check 10 different sudoku
         int numTests = 10;
         for (int testNumber = 0; testNumber < numTests; testNumber++) {
             generateRandomSudoku();
@@ -118,7 +117,6 @@ public class TestSolver {
         for (int outer = 0; outer < DIMENSIONS_OF_SUDOKU; outer++) {
             // Add one to DIMENSIONS_OF_SUDOKU because the number 9 is allowed.
             boolean[] hasBeenUsed = new boolean[DIMENSIONS_OF_SUDOKU + 1];
-            Arrays.fill(hasBeenUsed, false);
             for (int inner = 0; inner < DIMENSIONS_OF_SUDOKU; inner++) {
                 int value = compSudoku[outer][inner];
                 boolean check = checkValue(hasBeenUsed, value);
@@ -131,7 +129,6 @@ public class TestSolver {
         for (int outer = 0; outer < DIMENSIONS_OF_SUDOKU; outer++) {
             // Add one to DIMENSIONS_OF_SUDOKU because the number 9 is allowed.
             boolean[] hasBeenUsed = new boolean[DIMENSIONS_OF_SUDOKU + 1];
-            Arrays.fill(hasBeenUsed, false);
             for (int inner = 0; inner < DIMENSIONS_OF_SUDOKU; inner++) {
                 int value = compSudoku[inner][outer];
                 boolean check = checkValue(hasBeenUsed, value);
